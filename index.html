@@ -28,10 +28,10 @@
 
         /* States applied via JS */
         .phrase-selected-incorrect {
-            background-color: #fef2f2 !important; /* red-50 */
-            border-bottom-color: #ef4444 !important; /* red-500 */
+            background-color: #fff7ed !important; /* orange-50 */
+            border-bottom-color: #f97316 !important; /* orange-500 */
             border-bottom-style: solid !important;
-            color: #991b1b !important; /* red-800 */
+            color: #c2410c !important; /* orange-700 */
         }
 
         .phrase-selected-correct {
@@ -112,11 +112,11 @@
                             <p id="feedback-text" class="text-slate-700 leading-relaxed"></p>
                             
                             <!-- Hidden Need Reveal -->
-                            <div id="hidden-need-container" class="hidden mt-3 p-3 bg-white/60 rounded-lg border border-green-200/50">
-                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider flex items-center gap-1 mb-1">
-                                    <i class="fa-solid fa-lightbulb"></i> Patient's Hidden Need:
+                            <div id="hidden-need-container" class="hidden mt-4 p-4 bg-white/80 rounded-lg border border-green-200/50 shadow-sm">
+                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider flex items-center gap-1 mb-2">
+                                    <i class="fa-solid fa-lightbulb"></i> The Hidden Driver:
                                 </span>
-                                <p id="hidden-need-text" class="text-sm font-medium text-green-900"></p>
+                                <p id="hidden-need-text" class="text-sm md:text-base font-medium text-green-900"></p>
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                     <i class="fa-solid fa-award"></i>
                 </div>
                 <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Excellent Work!</h3>
-                <p class="text-lg text-slate-600 mb-10 max-w-xl mx-auto">You've successfully identified the emotional subtext and hidden needs for all the patients. This active listening skill is crucial for building trust.</p>
+                <p class="text-lg text-slate-600 mb-10 max-w-xl mx-auto">Thank you for taking the time to reflect on these interactions. Recognising the emotional drivers beneath difficult behaviour is the foundation of compassionate de-escalation. You've shown real skill today.</p>
                 <button onclick="location.reload()" class="font-bold text-lg px-8 py-4 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-md">
                     Restart Practice <i class="fa-solid fa-rotate-left ml-2"></i>
                 </button>
@@ -149,42 +149,42 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // All 4 scenarios derived from the original drag-and-drop image
+            // Scenarios with Lindsay's Coaching Tone for Feedback
             const scenarios = [
                 {
                     instruction: "that indicates they feel marginalised, ignored, or treated as an afterthought.",
                     hiddenNeed: "I need to understand what is happening and why. Being kept in the dark makes me feel powerless.",
                     phrases: [
-                        { text: '"Why do I even need that test?', status: 'incorrect', feedback: 'This is a literal question about medical necessity. While important, it is not the phrase that reveals their underlying feeling of being ignored.' },
-                        { text: 'Nobody has bothered', status: 'correct', feedback: 'Exactly! Using the word "bothered" suggests the patient feels like a nuisance rather than a priority. This is the emotional leak.' },
-                        { text: 'to explain any of this to me."', status: 'incorrect', feedback: 'This highlights the desired action (getting an explanation), but it lacks the heavy emotional accusation found earlier in the sentence.' }
+                        { text: '"Why do I even need that test?', status: 'incorrect', feedback: 'It is so easy to focus on the medical or logistical questions when we are busy, isn\'t it? You\'ve identified a practical question here, rather than the emotional subtext. Take another look to find the words that show us *why* they are really upset. You are doing great—this kind of active listening takes practice.' },
+                        { text: 'Nobody has bothered', status: 'correct', feedback: 'Spot on, thank you for looking so closely at that. When a patient says nobody has "bothered," they are telling us they feel like a nuisance rather than a priority. Recognising this emotional leak is exactly how we start to build empathy. You are showing real skill in picking up on these subtleties.' },
+                        { text: 'to explain any of this to me."', status: 'incorrect', feedback: 'You are absolutely right that this part highlights what they want us to do. However, the real emotional sting—the part where they feel ignored—happens just before this. Have another look at the words they chose. Reflecting on this is the first step to de-escalating.' }
                     ]
                 },
                 {
                     instruction: "that reveals their underlying anxiety about losing control over their external life.",
                     hiddenNeed: "I need clarity and a plan I can work with. Uncertainty makes everything harder.",
                     phrases: [
-                        { text: '"Just tell me what I need to do', status: 'incorrect', feedback: 'This is a literal request for instructions. Look for the phrase that explains *why* they are feeling urgent.' },
-                        { text: 'and how long this is going to take.', status: 'incorrect', feedback: 'This is a literal question about time management. What is driving this urgency?' },
-                        { text: 'I have things to get back to."', status: 'correct', feedback: 'Spot on. This reveals that their frustration isn\'t just about the current situation, but how it\'s disrupting their life outside these walls.' }
+                        { text: '"Just tell me what I need to do', status: 'incorrect', feedback: 'It is completely natural to hear this as a simple request for instructions, especially when we are trying to process patients quickly. But remember, we are acting like detectives for the emotional driver here. What is making them feel such urgency? Give it another try, you are on the right track.' },
+                        { text: 'and how long this is going to take.', status: 'incorrect', feedback: 'Time management is such a huge pressure for us, so it makes sense that you picked up on this. But beneath that question about time is a deeper anxiety about their own life. Look for the phrase that shows us they feel they are losing control. Keep going, this is not always easy to spot.' },
+                        { text: 'I have things to get back to."', status: 'correct', feedback: 'Beautifully done. You have found the exact moment where their frustration leaks out—it is about how this disruption impacts their life outside our walls. When we hear that anxiety rather than just the demand, we can respond with genuine warmth. This is excellent detective work.' }
                     ]
                 },
                 {
                     instruction: "that shows they feel mechanically processed rather than treated like a human being.",
                     hiddenNeed: "I need to feel genuinely heard, not just processed.",
                     phrases: [
-                        { text: '"I have already', status: 'incorrect', feedback: 'This is just the beginning of a factual statement.' },
-                        { text: 'explained this twice.', status: 'incorrect', feedback: 'This states a frustrating fact (repetition), but doesn\'t capture the core emotional accusation against the listener.' },
-                        { text: 'You are not actually listening to me."', status: 'correct', feedback: 'Correct. The phrase "not actually listening" reveals their belief that while words are being exchanged, human connection and empathy are missing.' }
+                        { text: '"I have already', status: 'incorrect', feedback: 'I can see why you clicked here, as it sets the scene for their frustration. But we want to listen for the specific accusation that shows they feel like a number on a conveyor belt. Look for the phrase where the emotional connection breaks down. Keep practicing, this takes time to tune into.' },
+                        { text: 'explained this twice.', status: 'incorrect', feedback: 'Having to repeat ourselves is incredibly frustrating, so it is understandable you highlighted this fact. But the real emotional weight hits when they accuse us of not treating them like a human being. Search for the words that show a lack of connection. You are doing a brilliant job engaging with this.' },
+                        { text: 'You are not actually listening to me."', status: 'correct', feedback: 'Exactly right. It is really uncomfortable to hear a patient say "you are not actually listening", but you didn\'t shy away from it. By identifying this, you understand that they just want human connection, not just to be processed. This kind of awareness is the foundation of great patient care.' }
                     ]
                 },
                 {
                     instruction: "that indicates they feel completely unvalued and disrespected by the system.",
                     hiddenNeed: "My time matters too. I need to feel that is understood and respected.",
                     phrases: [
-                        { text: '"I cannot be here all day.', status: 'incorrect', feedback: 'This is an expression of a time constraint, not necessarily the core emotional grievance.' },
-                        { text: 'Does nobody think about the fact', status: 'correct', feedback: 'Yes. This is an emotional accusation. They aren\'t just worried about time; they are hurt because they feel entirely unconsidered by the staff.' },
-                        { text: 'that people have lives?"', status: 'incorrect', feedback: 'This completes the thought, but the real emotional sting is the feeling that "nobody thinks" about them.' }
+                        { text: '"I cannot be here all day.', status: 'incorrect', feedback: 'It is so common for us to hear this as just another complaint about waiting times. But remember to look past the surface complaint to find the real grievance. Where do they express feeling completely unconsidered by the team? Take another look, you are doing really well.' },
+                        { text: 'Does nobody think about the fact', status: 'correct', feedback: 'I am so glad you picked up on this. It is a heavy accusation to hear that "nobody thinks" about them, but identifying it allows us to respond to their need for respect. Understanding that their anger is actually hurt is what sets great communicators apart. Fantastic work on this one.' },
+                        { text: 'that people have lives?"', status: 'incorrect', feedback: 'This part definitely completes their thought, and it is easy to focus on it. However, the true emotional trigger—the feeling of being completely disregarded—happens just before this. Look for the phrase where they question our empathy. Keep reflecting, you are building a vital skill here.' }
                     ]
                 }
             ];
@@ -304,10 +304,10 @@
                             feedbackContainer.className = 'animate-fade-in rounded-xl p-5 border border-green-200 bg-green-50 shadow-sm';
                             feedbackIcon.className = 'mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-green-500 shadow-sm';
                             feedbackIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
-                            feedbackTitle.textContent = 'Spot On!';
-                            feedbackTitle.className = 'font-bold text-lg mb-1 text-green-800';
+                            feedbackTitle.textContent = 'Beautifully done.';
+                            feedbackTitle.className = 'font-bold text-lg mb-2 text-green-800';
                             
-                            // Reveal Hidden Need from original design
+                            // Reveal Hidden Need
                             hiddenNeedText.textContent = scenarios[currentIndex].hiddenNeed;
                             hiddenNeedContainer.classList.remove('hidden');
                             hiddenNeedContainer.classList.add('animate-fade-in');
@@ -327,16 +327,16 @@
                             phrases.forEach(p => p.classList.add('pointer-events-none'));
                             
                         } else {
-                            // Error State
+                            // Error State - Warmer colors for the coaching tone
                             this.classList.add('phrase-selected-incorrect');
-                            feedbackContainer.className = 'animate-fade-in rounded-xl p-5 border border-red-200 bg-red-50 shadow-sm';
-                            feedbackIcon.className = 'mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-red-500 shadow-sm';
-                            feedbackIcon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-                            feedbackTitle.textContent = 'Not quite the root emotion.';
-                            feedbackTitle.className = 'font-bold text-lg mb-1 text-red-800';
+                            feedbackContainer.className = 'animate-fade-in rounded-xl p-5 border border-orange-200 bg-orange-50 shadow-sm';
+                            feedbackIcon.className = 'mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-orange-500 shadow-sm';
+                            feedbackIcon.innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+                            feedbackTitle.textContent = 'Good try. Let\'s look a little deeper.';
+                            feedbackTitle.className = 'font-bold text-lg mb-2 text-orange-800';
                             
                             resetBtn.classList.remove('hidden');
-                            resetBtn.className = 'text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500';
+                            resetBtn.className = 'text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 bg-orange-100 text-orange-700 hover:bg-orange-200 focus:ring-orange-500';
                             
                             playTone(300, 'triangle', 0.2);
                         }
