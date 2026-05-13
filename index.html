@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtext Highlighter Interaction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom styles for the interactive text */
+        .interactive-phrase {
+            transition: all 0.2s ease-in-out;
+            border-bottom: 2px dashed #cbd5e1; /* slate-300 */
+            padding: 0.125rem 0.25rem;
+            margin: 0 0.125rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .interactive-phrase:hover {
+            background-color: #e0f2fe; /* sky-100 */
+            border-bottom-color: #0ea5e9; /* sky-500 */
+            color: #0369a1; /* sky-700 */
+        }
+
+        /* States applied via JS */
+        .phrase-selected-incorrect {
+            background-color: #fef2f2 !important; /* red-50 */
+            border-bottom-color: #ef4444 !important; /* red-500 */
+            border-bottom-style: solid !important;
+            color: #991b1b !important; /* red-800 */
+        }
+
+        .phrase-selected-correct {
+            background-color: #f0fdf4 !important; /* green-50 */
+            border-bottom-color: #22c55e !important; /* green-500 */
+            border-bottom-style: solid !important;
+            color: #166534 !important; /* green-800 */
+        }
+        
+        /* Fade in animation for feedback */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 sm:p-8">
+
+    <main id="app-container" class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        
+        <header class="bg-slate-800 px-6 py-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-500/20 text-blue-300 p-2 rounded-lg">
+                    <i class="fa-solid fa-ear-listen"></i>
+                </div>
+                <div>
+                    <h2 class="text-white font-semibold text-lg">Active Listening Practice</h2>
+                    <p class="text-slate-400 text-sm">Identifying Emotional Subtext</p>
+                </div>
+            </div>
+            <div id="progress-badge" class="bg-slate-700 text-slate-300 px-3 py-1 rounded-full text-xs font-bold tracking-wider">
+                1 / 4
+            </div>
+        </header>
+
+        <div class="p-6 sm:p-8">
+            
+            <div id="exercise-area">
+                <!-- Instructions -->
+                <div class="mb-8">
+                    <p class="text-slate-700 font-medium text-lg leading-relaxed">
+                        Read the patient's statement below. 
+                        <span class="text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">Select the specific phrase</span> 
+                        <span id="instruction-text">that indicates they feel marginalized, ignored, or treated as an afterthought.</span>
+                    </p>
+                </div>
+
+                <!-- The Interactive Quote Box -->
+                <div class="relative bg-slate-50 rounded-xl p-6 sm:p-8 border border-slate-200 shadow-inner mb-8 transition-opacity duration-300" id="quote-wrapper">
+                    <i class="fa-solid fa-quote-left absolute top-4 left-4 text-4xl text-slate-200/60"></i>
+                    
+                    <p class="text-xl sm:text-2xl text-slate-800 leading-relaxed font-medium relative z-10" id="quote-container">
+                        <!-- Phrases dynamically injected here -->
+                    </p>
+                </div>
+
+                <!-- Feedback Container -->
+                <div id="feedback-container" class="hidden rounded-xl p-5 border">
+                    <div class="flex items-start gap-4">
+                        <div id="feedback-icon" class="mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold">
+                            <!-- Icon injected via JS -->
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="feedback-title" class="font-bold text-lg mb-1"></h3>
+                            <p id="feedback-text" class="text-slate-700 leading-relaxed"></p>
+                            
+                            <!-- Hidden Need Reveal -->
+                            <div id="hidden-need-container" class="hidden mt-3 p-3 bg-white/60 rounded-lg border border-green-200/50">
+                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider flex items-center gap-1 mb-1">
+                                    <i class="fa-solid fa-lightbulb"></i> Patient's Hidden Need:
+                                </span>
+                                <p id="hidden-need-text" class="text-sm font-medium text-green-900"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex justify-end gap-2">
+                        <button id="reset-btn" class="hidden text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2">
+                            Try Again <i class="fa-solid fa-arrow-rotate-right ml-1"></i>
+                        </button>
+                        <button id="next-btn" class="hidden text-sm font-bold px-5 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-md animate-fade-in">
+                            Next Patient <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="completion-screen" class="hidden text-center py-8 animate-fade-in">
+                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner border border-green-200">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Excellent Work!</h3>
+                <p class="text-slate-600 mb-8 max-w-md mx-auto">You've successfully identified the emotional subtext and hidden needs for all the patients. This active listening skill is crucial for building trust.</p>
+                <button onclick="location.reload()" class="font-bold px-6 py-3 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-md">
+                    Restart Practice <i class="fa-solid fa-rotate-left ml-2"></i>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // All 4 scenarios derived from the original drag-and-drop image
+            const scenarios = [
+                {
+                    instruction: "that indicates they feel marginalized, ignored, or treated as an afterthought.",
+                    hiddenNeed: "I need to understand what is happening and why. Being kept in the dark makes me feel powerless.",
+                    phrases: [
+                        { text: '"Why do I even need that test?', status: 'incorrect', feedback: 'This is a literal question about medical necessity. While important, it is not the phrase that reveals their underlying feeling of being ignored.' },
+                        { text: 'Nobody has bothered', status: 'correct', feedback: 'Exactly! Using the word "bothered" suggests the patient feels like a nuisance rather than a priority. This is the emotional leak.' },
+                        { text: 'to explain any of this to me."', status: 'incorrect', feedback: 'This highlights the desired action (getting an explanation), but it lacks the heavy emotional accusation found earlier in the sentence.' }
+                    ]
+                },
+                {
+                    instruction: "that reveals their underlying anxiety about losing control over their external life.",
+                    hiddenNeed: "I need clarity and a plan I can work with. Uncertainty makes everything harder.",
+                    phrases: [
+                        { text: '"Just tell me what I need to do', status: 'incorrect', feedback: 'This is a literal request for instructions. Look for the phrase that explains *why* they are feeling urgent.' },
+                        { text: 'and how long this is going to take.', status: 'incorrect', feedback: 'This is a literal question about time management. What is driving this urgency?' },
+                        { text: 'I have things to get back to."', status: 'correct', feedback: 'Spot on. This reveals that their frustration isn\'t just about the current situation, but how it\'s disrupting their life outside these walls.' }
+                    ]
+                },
+                {
+                    instruction: "that shows they feel mechanically processed rather than treated like a human being.",
+                    hiddenNeed: "I need to feel genuinely heard, not just processed.",
+                    phrases: [
+                        { text: '"I have already', status: 'incorrect', feedback: 'This is just the beginning of a factual statement.' },
+                        { text: 'explained this twice.', status: 'incorrect', feedback: 'This states a frustrating fact (repetition), but doesn\'t capture the core emotional accusation against the listener.' },
+                        { text: 'You are not actually listening to me."', status: 'correct', feedback: 'Correct. The phrase "not actually listening" reveals their belief that while words are being exchanged, human connection and empathy are missing.' }
+                    ]
+                },
+                {
+                    instruction: "that indicates they feel completely unvalued and disrespected by the system.",
+                    hiddenNeed: "My time matters too. I need to feel that is understood and respected.",
+                    phrases: [
+                        { text: '"I cannot be here all day.', status: 'incorrect', feedback: 'This is an expression of a time constraint, not necessarily the core emotional grievance.' },
+                        { text: 'Does nobody think about the fact', status: 'correct', feedback: 'Yes. This is an emotional accusation. They aren\'t just worried about time; they are hurt because they feel entirely unconsidered by the staff.' },
+                        { text: 'that people have lives?"', status: 'incorrect', feedback: 'This completes the thought, but the real emotional sting is the feeling that "nobody thinks" about them.' }
+                    ]
+                }
+            ];
+
+            let currentIndex = 0;
+
+            const quoteContainer = document.getElementById('quote-container');
+            const instructionText = document.getElementById('instruction-text');
+            const progressBadge = document.getElementById('progress-badge');
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            const hiddenNeedContainer = document.getElementById('hidden-need-container');
+            const hiddenNeedText = document.getElementById('hidden-need-text');
+            const resetBtn = document.getElementById('reset-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const exerciseArea = document.getElementById('exercise-area');
+            const completionScreen = document.getElementById('completion-screen');
+            const quoteWrapper = document.getElementById('quote-wrapper');
+
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playTone(frequency, type, duration) {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration);
+            }
+
+            function renderScenario(index) {
+                const scenario = scenarios[index];
+                
+                // Update UI
+                progressBadge.textContent = `${index + 1} / ${scenarios.length}`;
+                instructionText.textContent = scenario.instruction;
+                
+                // Hide feedback and buttons
+                feedbackContainer.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                hiddenNeedContainer.classList.add('hidden');
+                
+                // Fade effect for quote change
+                quoteWrapper.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    // Generate phrase HTML
+                    quoteContainer.innerHTML = '';
+                    scenario.phrases.forEach((phrase, i) => {
+                        const span = document.createElement('span');
+                        span.className = 'interactive-phrase';
+                        span.setAttribute('data-status', phrase.status);
+                        span.setAttribute('data-feedback', phrase.feedback);
+                        // Add a space after the span unless it's the last one
+                        span.textContent = phrase.text;
+                        quoteContainer.appendChild(span);
+                        
+                        if (i < scenario.phrases.length - 1) {
+                            quoteContainer.appendChild(document.createTextNode(' '));
+                        }
+                    });
+
+                    // Attach Event Listeners to new phrases
+                    attachPhraseListeners();
+                    quoteWrapper.classList.remove('opacity-0');
+                }, 200);
+            }
+
+            function resetPhrases() {
+                const phrases = document.querySelectorAll('.interactive-phrase');
+                phrases.forEach(p => {
+                    p.classList.remove('phrase-selected-correct', 'phrase-selected-incorrect', 'opacity-50', 'pointer-events-none');
+                });
+            }
+
+            function attachPhraseListeners() {
+                const phrases = document.querySelectorAll('.interactive-phrase');
+                
+                phrases.forEach(phrase => {
+                    phrase.addEventListener('click', function() {
+                        const isCorrect = this.getAttribute('data-status') === 'correct';
+                        const feedback = this.getAttribute('data-feedback');
+
+                        resetPhrases();
+
+                        // Dim unselected
+                        phrases.forEach(p => {
+                            if (p !== this) p.classList.add('opacity-50');
+                        });
+
+                        // Trigger animation reflow
+                        feedbackContainer.classList.remove('animate-fade-in');
+                        void feedbackContainer.offsetWidth; 
+
+                        // Setup common feedback UI
+                        feedbackContainer.classList.remove('hidden');
+                        feedbackContainer.classList.add('animate-fade-in');
+                        feedbackText.textContent = feedback;
+                        hiddenNeedContainer.classList.add('hidden');
+                        nextBtn.classList.add('hidden');
+
+                        if (isCorrect) {
+                            // Success State
+                            this.classList.add('phrase-selected-correct');
+                            feedbackContainer.className = 'animate-fade-in rounded-xl p-5 border border-green-200 bg-green-50 shadow-sm';
+                            feedbackIcon.className = 'mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-green-500 shadow-sm';
+                            feedbackIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                            feedbackTitle.textContent = 'Spot On!';
+                            feedbackTitle.className = 'font-bold text-lg mb-1 text-green-800';
+                            
+                            // Reveal Hidden Need from original design
+                            hiddenNeedText.textContent = scenarios[currentIndex].hiddenNeed;
+                            hiddenNeedContainer.classList.remove('hidden');
+                            hiddenNeedContainer.classList.add('animate-fade-in');
+                            
+                            resetBtn.classList.add('hidden');
+                            
+                            // Update Next Button logic
+                            if (currentIndex < scenarios.length - 1) {
+                                nextBtn.classList.remove('hidden');
+                                nextBtn.innerHTML = 'Next Patient <i class="fa-solid fa-arrow-right ml-1"></i>';
+                            } else {
+                                nextBtn.classList.remove('hidden');
+                                nextBtn.innerHTML = 'Finish Practice <i class="fa-solid fa-flag-checkered ml-1"></i>';
+                            }
+
+                            playTone(600, 'sine', 0.1); setTimeout(() => playTone(800, 'sine', 0.2), 100);
+                            phrases.forEach(p => p.classList.add('pointer-events-none'));
+                            
+                        } else {
+                            // Error State
+                            this.classList.add('phrase-selected-incorrect');
+                            feedbackContainer.className = 'animate-fade-in rounded-xl p-5 border border-red-200 bg-red-50 shadow-sm';
+                            feedbackIcon.className = 'mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-red-500 shadow-sm';
+                            feedbackIcon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                            feedbackTitle.textContent = 'Not quite the root emotion.';
+                            feedbackTitle.className = 'font-bold text-lg mb-1 text-red-800';
+                            
+                            resetBtn.classList.remove('hidden');
+                            resetBtn.className = 'text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500';
+                            
+                            playTone(300, 'triangle', 0.2);
+                        }
+                    });
+                });
+            }
+
+            resetBtn.addEventListener('click', () => {
+                resetPhrases();
+                feedbackContainer.classList.add('hidden');
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentIndex++;
+                if (currentIndex < scenarios.length) {
+                    renderScenario(currentIndex);
+                } else {
+                    // Show completion
+                    exerciseArea.classList.add('hidden');
+                    progressBadge.classList.add('hidden');
+                    completionScreen.classList.remove('hidden');
+                    playTone(400, 'sine', 0.1); setTimeout(() => playTone(600, 'sine', 0.1), 100); setTimeout(() => playTone(800, 'sine', 0.3), 200);
+                }
+            });
+
+            // Initialize first scenario
+            renderScenario(currentIndex);
+        });
+    </script>
+</body>
+</html>
