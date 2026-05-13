@@ -60,17 +60,17 @@
         }
     </style>
 </head>
-<body class="bg-transparent w-full m-0 p-1 sm:p-2 flex justify-center">
+<body class="bg-transparent w-full m-0 p-4 md:p-8 flex justify-center">
 
-    <main id="app-container" class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <main id="app-container" class="w-full max-w-5xl bg-white overflow-hidden rounded-2xl border border-slate-200 shadow-md">
         
-        <header class="bg-slate-800 px-6 py-4 flex items-center justify-between gap-3">
+        <header class="bg-slate-800 px-6 py-4 md:px-8 md:py-5 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-500/20 text-blue-300 p-2 rounded-lg">
                     <i class="fa-solid fa-ear-listen"></i>
                 </div>
                 <div>
-                    <h2 class="text-white font-semibold text-lg">Active Listening Practice</h2>
+                    <h2 class="text-white font-semibold text-lg md:text-xl">Active Listening Practice</h2>
                     <p class="text-slate-400 text-sm">Identifying Emotional Subtext</p>
                 </div>
             </div>
@@ -79,23 +79,24 @@
             </div>
         </header>
 
-        <div class="p-6 sm:p-8">
+        <div class="p-6 md:p-10">
             
             <div id="exercise-area">
                 <!-- Instructions -->
-                <div class="mb-8">
-                    <p class="text-slate-700 font-medium text-lg leading-relaxed">
+                <div class="mb-8 md:mb-10 text-center">
+                    <p class="text-slate-700 font-medium text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
                         Read the patient's statement below. 
                         <span class="text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">Select the specific phrase</span> 
+                        <br class="hidden md:block" />
                         <span id="instruction-text">that indicates they feel marginalized, ignored, or treated as an afterthought.</span>
                     </p>
                 </div>
 
                 <!-- The Interactive Quote Box -->
-                <div class="relative bg-slate-50 rounded-xl p-6 sm:p-8 border border-slate-200 shadow-inner mb-8 transition-opacity duration-300" id="quote-wrapper">
-                    <i class="fa-solid fa-quote-left absolute top-4 left-4 text-4xl text-slate-200/60"></i>
+                <div class="relative bg-slate-50/80 rounded-2xl p-8 md:p-14 border border-slate-200 shadow-sm mb-8 transition-opacity duration-300" id="quote-wrapper">
+                    <i class="fa-solid fa-quote-left absolute top-6 left-6 md:top-8 md:left-8 text-4xl md:text-5xl text-slate-200/60"></i>
                     
-                    <p class="text-xl sm:text-2xl text-slate-800 leading-relaxed font-medium relative z-10" id="quote-container">
+                    <p class="text-xl sm:text-2xl md:text-3xl text-slate-800 leading-[1.6] font-medium relative z-10 text-center mx-auto max-w-4xl" id="quote-container">
                         <!-- Phrases dynamically injected here -->
                     </p>
                 </div>
@@ -131,13 +132,13 @@
                 </div>
             </div>
 
-            <div id="completion-screen" class="hidden text-center py-8 animate-fade-in">
-                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner border border-green-200">
+            <div id="completion-screen" class="hidden text-center py-12 md:py-20 animate-fade-in">
+                <div class="w-24 h-24 md:w-28 md:h-28 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-5xl md:text-6xl mx-auto mb-8 shadow-inner border border-green-200">
                     <i class="fa-solid fa-award"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Excellent Work!</h3>
-                <p class="text-slate-600 mb-8 max-w-md mx-auto">You've successfully identified the emotional subtext and hidden needs for all the patients. This active listening skill is crucial for building trust.</p>
-                <button onclick="location.reload()" class="font-bold px-6 py-3 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-md">
+                <h3 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Excellent Work!</h3>
+                <p class="text-lg text-slate-600 mb-10 max-w-xl mx-auto">You've successfully identified the emotional subtext and hidden needs for all the patients. This active listening skill is crucial for building trust.</p>
+                <button onclick="location.reload()" class="font-bold text-lg px-8 py-4 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-md">
                     Restart Practice <i class="fa-solid fa-rotate-left ml-2"></i>
                 </button>
             </div>
